@@ -8,7 +8,7 @@ function handler(req, res) {
       return getUserById();
     case "PUT":
       return updateUser();
-    case "DELETE":
+    case "DELETES":
       return deleteUser();
     default:
       return res.status(405).end(`Method ${req.method} Not Allowed`);

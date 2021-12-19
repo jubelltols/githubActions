@@ -4,6 +4,19 @@ Esta práctica consistirá en aplicar una serie de mejoras sobre un proyecto cre
 
 Crear un workflow (nombre_repositorio_workflow) de github Actions con los siguientes jobs:
 
+## 1.Github Action
+### 1.1.Qué es?
+GitHub Actions es una herramienta que permite reducir la cadena de acciones necesaria para la ejecución de código, mediante la creación de un de flujo de trabajo encargado del Pipeline. Siendo configurable para que GitHub reaccione a ciertos eventos de forma automática según nuestras preferencias.
+
+Por lo tanto, GitHub Actions permite crear workflows que se puedan utilizar para compilar, testear y desplegar código. Además, da la posibilidad de crear flujos de integración y despliegue continuo dentro de nuestro repositorio.
+
+### 1.2.Componentes
+- Workflow: Procedimiento automatizado que agregamos a un repositorio. Se compone de uno o más jobs y pueden ser activados por un evento (PR, push a master, etc) .
+- Jobs: Conjunto de steps que se ejecutan en el mismo runner. Por defecto, los jobs de un workflow se ejecutan en paralelo.
+- Steps: Tarea individual que ejecuta dentro de un job. Puede ser un action o un comando shell.
+- Actions: Comandos independientes que se combinan formando steps. Son el bloque de construcción portátil más pequeño de un flujo de trabajo.
+- Runner: Servidor que tiene instalada la aplicación de ejecución de GitHub actions
+
 ## 2.Linter_job
 Se encargará de ejecutar el linter que ya está instalado en el proyecto (existe un script para ello en el package.json) para verificar que la sintaxis utilizada es la correcta en todos los ficheros javascript. En caso de que existan errores corregirlos hasta que el job se ejecute sin problemas.
 
