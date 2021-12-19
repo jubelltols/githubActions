@@ -1,0 +1,9 @@
+name: "Cypress Badge"
+description: "Add Cypress Badge"
+inputs:
+  result-cypress:
+    description: 'Cypress result'
+    required: true
+runs:
+  using: "node12"
+  main: 'index.js'

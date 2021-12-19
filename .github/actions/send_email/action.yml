@@ -1,0 +1,27 @@
+name: 'Send Email'
+description: 'Send a email with results'
+inputs:
+  email:
+    description: 'Email address'
+    required: true
+  password:
+    description: 'Email password'
+    required: true
+  send_to:
+    description: 'Email receive'
+    required: true
+  cypress:
+    description: 'Cypress result'
+    required: true
+  linter:
+    description: 'Linter result'
+    required: true
+  deploy:
+    description: 'Deploy result'
+    required: true
+  badge:
+    description: 'Badge result'
+    required: true
+runs:
+  using: "node12"
+  main: 'index.js'

@@ -1,0 +1,90 @@
+name: githubActions_workflow
+on: [push]
+jobs:
+  Linter_job:
+    runs-on: ubuntu-latest
+    steps: 
+    - name: Checkout
+      uses: actions/checkout@v2.4.0
+    - name: Lint
+      run: |
+        npm install
+        npm run lint
+  Cypress_job:
+    needs: Linter_job
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2.4.0
+    - name: Cypress 
+      id: cypress
+      uses: cypress-io/github-action@v2
+      continue-on-error: true
+      with:
+        config-file: cypress.json
+        build: npm run build
+        start: npm start
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+    - name: Create result.txt
+      run: echo ${{ steps.cypress.outcome}} > result.txt
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: result.txt
+        path: result.txt
+  Add_badge_job:
+    needs: Cypress_job
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2.4.0
+    - name: Download Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: result.txt
+    - name: Create Output
+      id: cypress
+      run: echo "::set-output name=cypress_outcome::$(cat result.txt)"
+    - name: Create Badge
+      uses: ./.github/actions/create_badge/
+      with:
+        result-cypress: ${{ steps.cypress.outputs.cypress_outcome }}
+    - name: Push 
+      run: |
+        git config user.name jubelltols
+        git config user.email jubelltols@gmail.com
+        git pull
+        git add .
+        git commit -m "Update README.md"
+        git push 
+  Deploy_job:
+    needs: Cypress_job
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2.4.0
+    - name: Vercel
+      uses: amondnet/vercel-action@v20
+      with:
+        working-directory: ./
+        vercel-token: ${{ secrets.VERCEL_TOKEN }} 
+        vercel-org-id: ${{ secrets.ORG_ID }} 
+        vercel-project-id: ${{ secrets.PROJECT_ID }}
+  Notification_job:
+    needs: [Linter_job, Cypress_job, Add_badge_job, Deploy_job]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.4.0
+      - name: Send Email
+        uses: ./.github/actions/send_email/
+        with:
+          email: ${{ secrets.EMAIL }}
+          password: ${{ secrets.PASSWORD }}
+          send_to: ${{ secrets.EMAIL }}
+          linter: ${{ needs.Linter_job.result }}
+          cypress: ${{ needs.Cypress_job.result }}
+          badge: ${{ needs.Add_badge_job.result }}
+          deploy: ${{ needs.Deploy_job.result }}
